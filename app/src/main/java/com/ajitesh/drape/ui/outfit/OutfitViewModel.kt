@@ -11,20 +11,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class OutfitUiState {
-    data class OutfitList(val outfits: List<Outfit>) : OutfitUiState()
+    data class OutfitList(val outfits: Map<String, List<Outfit>>) : OutfitUiState()
 }
 
 @HiltViewModel
 class OutfitViewModel @Inject constructor(private val outfitRepository: OutfitRepository) :
     ViewModel() {
 
-    private val _uiState = MutableStateFlow<OutfitUiState>(OutfitUiState.OutfitList(emptyList()))
+    private val _uiState = MutableStateFlow<OutfitUiState>(OutfitUiState.OutfitList(emptyMap()))
     val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            outfitRepository.getAll().collect{
-                updateState(OutfitUiState.OutfitList(it.reversed()))
+            outfitRepository.getAllAsMap().collect{
+                updateState(OutfitUiState.OutfitList(it))
             }
         }
     }

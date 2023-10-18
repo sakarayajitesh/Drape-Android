@@ -23,10 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ajitesh.drape.data.datasource.local.entity.Outfit
-import com.ajitesh.drape.groupByTimestamp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +41,7 @@ fun OutfitScreen(uiState: OutfitUiState) {
         ) {
             if (uiState is OutfitUiState.OutfitList) {
                 if (uiState.outfits.isNotEmpty()) {
-                    val outfitsMap = uiState.outfits.groupByTimestamp()
+                    val outfitsMap = uiState.outfits
                     LazyColumn(
                         content = {
                             items(items = outfitsMap.entries.toList()) { entry ->
@@ -62,9 +60,9 @@ fun OutfitScreen(uiState: OutfitUiState) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun OutfitTile(entry: Map.Entry<LocalDate, List<Outfit>>) {
+fun OutfitTile(entry: Map.Entry<String, List<Outfit>>) {
     Text(
-        text = entry.key.toString(),
+        text = entry.key,
         fontWeight = FontWeight.Bold
     )
     Box(modifier = Modifier.size(4.dp))
@@ -93,6 +91,5 @@ fun OutfitTile(entry: Map.Entry<LocalDate, List<Outfit>>) {
 @Preview
 @Composable
 fun PreviewOutfitScreen() {
-    val outfit = Outfit(clothingId = 1, image = "")
-    OutfitScreen(uiState = OutfitUiState.OutfitList(mutableListOf(outfit,outfit,outfit)))
+    OutfitScreen(uiState = OutfitUiState.OutfitList(emptyMap()))
 }
