@@ -20,8 +20,12 @@ object DatabaseModule {
     fun provideDatabase(application: Application): AppDatabase =
         Room.databaseBuilder(
             application.applicationContext,
-            AppDatabase::class.java, "drape-database"
-        ).fallbackToDestructiveMigration().build()
+            AppDatabase::class.java,
+            "drape-database"
+        )
+            .createFromAsset("myapp.db")
+            .fallbackToDestructiveMigration()
+            .build()
 
 
     @Provides
