@@ -24,7 +24,6 @@ object DatabaseModule {
             "drape-database"
         )
             .createFromAsset("myapp.db")
-            .fallbackToDestructiveMigration()
             .build()
 
 
