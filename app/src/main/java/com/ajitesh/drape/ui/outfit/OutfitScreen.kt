@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -54,8 +53,10 @@ fun OutfitScreen(uiState: OutfitUiState) {
                         content = {
                             items(items = outfitsMap.entries.toList()) { entry ->
                                 OutfitTile(entry)
+                                Box(modifier = Modifier.height(16.dp))
                             }
-                        })
+                        },
+                    )
                 } else {
                     Text(modifier = Modifier.align(Alignment.Center), text = "Empty List")
                 }
