@@ -6,10 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -26,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.ajitesh.drape.data.datasource.local.entity.Clothing
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
@@ -69,9 +69,9 @@ fun ManageScreen(
                 )
             }
             Box(modifier = Modifier.fillMaxSize()) {
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Adaptive(80.dp),
-                    verticalItemSpacing = 4.dp,
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(80.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     content = {
                         items(clothingList) { clothing ->
@@ -81,12 +81,16 @@ fun ManageScreen(
                                 contentDescription = null,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .wrapContentHeight()
                                     .clip(shape = RoundedCornerShape(4.dp))
-                            )
+                            ) { requestBuilder ->
+                                requestBuilder.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                    .skipMemoryCache(true)
+                            }
                         }
                     },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
         }

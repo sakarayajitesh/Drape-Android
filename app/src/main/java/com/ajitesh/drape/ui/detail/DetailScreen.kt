@@ -3,9 +3,10 @@ package com.ajitesh.drape.ui.detail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
@@ -21,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -97,9 +97,13 @@ fun DetailScreen(
             if (uiState is DetailUiState.OpenDetail) {
                 val clothing = uiState.clothing
                 Column(modifier = Modifier.fillMaxSize()) {
-                    Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                        DetailScreenImage(image = clothing.image)
+                    Row {
+                        DetailScreenImage(modifier = Modifier.weight(1f), image = clothing.image)
+                        Box(modifier = Modifier.weight(1f)) {
+
+                        }
                     }
+
                 }
             } else {
                 Text(text = "Detail Error")
@@ -110,19 +114,19 @@ fun DetailScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun DetailScreenImage(image: String) {
+fun DetailScreenImage(modifier: Modifier = Modifier, image: String) {
     val imageSize = 300.dp
     if (image.isNotEmpty())
         GlideImage(
-            modifier = Modifier.size(imageSize),
+            modifier = modifier.height(imageSize),
             model = image,
             contentScale = ContentScale.FillHeight,
             contentDescription = "Clothing Image"
         )
     else
         Box(
-            modifier = Modifier
-                .size(imageSize)
+            modifier = modifier
+                .height(imageSize)
                 .background(color = Color.Gray)
         )
 }

@@ -23,7 +23,6 @@ object DatabaseModule {
             AppDatabase::class.java,
             "drape-database"
         )
-            .createFromAsset("myapp.db")
             .build()
 
 

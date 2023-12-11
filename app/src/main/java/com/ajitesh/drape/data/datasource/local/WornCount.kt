@@ -5,5 +5,6 @@ import androidx.room.ColumnInfo
 data class WornCount(
     val id: Int,
     val image: String,
-    @ColumnInfo("worn_count") val wornCount: Int
+    @ColumnInfo("worn_count") val wornCount: Int,
+    @ColumnInfo(name = "wear_limit") val wearLimit: Int
 )

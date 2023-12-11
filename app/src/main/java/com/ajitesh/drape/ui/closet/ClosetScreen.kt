@@ -5,17 +5,15 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -29,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -94,9 +91,9 @@ fun ClosetScreen(
         ) {
             if (uiState is ClosetUiState.PhotoList) {
                 if (uiState.photos.isNotEmpty()) {
-                    LazyVerticalStaggeredGrid(
-                        columns = StaggeredGridCells.Adaptive(80.dp),
-                        verticalItemSpacing = 4.dp,
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(80.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         content = {
                             items(uiState.photos) { photo ->
@@ -106,9 +103,7 @@ fun ClosetScreen(
                                     contentDescription = null,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .wrapContentHeight()
                                         .clip(shape = RoundedCornerShape(4.dp))
-                                        .background(color = Color.Blue)
                                         .clickable {
                                             navigate("detail/${photo.id}")
                                         }

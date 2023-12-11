@@ -12,6 +12,5 @@ class ClosetRepositoryImpl @Inject constructor(private val dao: ClothingDao): Cl
     override suspend fun insertAll(clothingList: List<Clothing>){
         dao.insertAll(*clothingList.toTypedArray())
     }
-
     override suspend fun get(id: Int) = dao.get(id)
 }

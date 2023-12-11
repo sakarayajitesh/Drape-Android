@@ -2,6 +2,9 @@ package com.ajitesh.drape.ui.outfit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -9,6 +12,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -16,6 +23,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -61,31 +69,41 @@ fun OutfitScreen(uiState: OutfitUiState) {
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun OutfitTile(entry: Map.Entry<String, List<Outfit>>) {
-    Text(
-        text = entry.key,
-        fontWeight = FontWeight.Bold
-    )
-    Box(modifier = Modifier.size(4.dp))
-    LazyRow(content = {
-        items(entry.value.toList()) { outfit ->
-            val imageModifier = Modifier
-                .height(150.dp)
-                .width(100.dp)
-                .padding(4.dp)
-            if (outfit.image.isNotEmpty())
-                GlideImage(
-                    modifier = imageModifier,
-                    model = outfit.image,
-                    contentDescription = "Outfit",
-                    contentScale = ContentScale.Crop
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(4.dp)) {
+        Column(modifier = Modifier.padding(vertical = 16.dp)) {
+            Row {
+                Box(modifier = Modifier.size(16.dp))
+                Text(
+                    text = entry.key,
+                    fontWeight = FontWeight.Bold
                 )
-            else
-                Box(
-                    modifier = imageModifier.background(color = Color.Gray)
-                )
+            }
+            Box(modifier = Modifier.size(16.dp))
+            LazyRow(content = {
+                itemsIndexed(entry.value.toList()) { index, outfit ->
+                    val imageModifier = Modifier
+                        .height(120.dp)
+                        .width(80.dp)
+                    if(index==0)
+                        Box(modifier = Modifier.size(16.dp))
+                    else
+                        Box(modifier = Modifier.size(8.dp))
+                    if (outfit.image.isNotEmpty())
+                        GlideImage(
+                            modifier = imageModifier.clip(shape = RoundedCornerShape(4.dp)),
+                            model = outfit.image,
+                            contentDescription = "Outfit",
+                            contentScale = ContentScale.Crop
+                        )
+                    else
+                        Box(modifier = imageModifier.background(color = Color.Gray))
+                    if(index==entry.value.toList().size-1){
+                        Box(modifier = Modifier.size(16.dp))
+                    }
+                }
+            })
         }
-    })
-    Box(modifier = Modifier.size(16.dp))
+    }
 }
 
 @Preview

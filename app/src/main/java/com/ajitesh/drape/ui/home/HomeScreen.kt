@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -41,7 +42,7 @@ fun HomeScreen(
             NavigationBar {
                 HomeUiStateList.forEachIndexed { _, item ->
                     NavigationBarItem(
-                        icon = { Icon(Icons.Outlined.Home, contentDescription = item.title) },
+                        icon = { Icon(painter = painterResource(id = item.icon), contentDescription = item.title) },
                         label = { Text(item.title) },
                         selected = HomeUiStateList[uiState.position].title == item.title,
                         onClick = {
