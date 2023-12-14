@@ -6,29 +6,31 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.ajitesh.drape.data.datasource.local.entity.Clothing
-import com.ajitesh.drape.data.datasource.local.entity.Laundry
 import com.ajitesh.drape.data.datasource.local.entity.Outfit
-import com.ajitesh.drape.domain.repository.ClosetRepository
-import com.ajitesh.drape.domain.repository.LaundryRepository
+import com.ajitesh.drape.domain.repository.DetailRepository
 import com.ajitesh.drape.domain.repository.OutfitRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class DetailUiState{
-    object Error: DetailUiState()
-    data class OpenDetail(val clothing: Clothing): DetailUiState()
+sealed class DetailUiState {
+    object Error : DetailUiState()
+    data class OpenDetail(
+        val clothing: Clothing,
+        val laundryCount: Int? = null,
+        val lastLaundryDate: Long? = null
+    ) : DetailUiState()
 }
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val application: Application,
-    private val closetRepository: ClosetRepository,
     private val outfitRepository: OutfitRepository,
-    private val laundryRepository: LaundryRepository
+    private val detailRepository: DetailRepository
 ) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow<DetailUiState>(DetailUiState.Error)
@@ -38,8 +40,28 @@ class DetailViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val clothing = closetRepository.get(clothingId)
+            val clothing = detailRepository.get(clothingId)
             updateState(DetailUiState.OpenDetail(clothing))
+            detailRepository.getLaundry(clothingId).collect { laundryList ->
+
+                if (laundryList.isNotEmpty())
+                    _uiState.update { state ->
+                        when (state) {
+                            is DetailUiState.OpenDetail -> {
+                                val clo = state.clothing
+                                val laundryCount = laundryList.size
+                                val lastLaundryDate = laundryList.last().timestamp
+                                state.copy(
+                                    clothing = clo,
+                                    laundryCount = laundryCount,
+                                    lastLaundryDate = lastLaundryDate
+                                )
+                            }
+
+                            is DetailUiState.Error -> state
+                        }
+                    }
+            }
         }
     }
 
@@ -47,7 +69,7 @@ class DetailViewModel @Inject constructor(
         _uiState.value = newState
     }
 
-    fun addToOutfit(clothing: Clothing){
+    fun addToOutfit(clothing: Clothing) {
         viewModelScope.launch {
             val outfit = Outfit(clothingId = clothing.id, image = clothing.image)
             outfitRepository.insertAll(listOf(outfit))
@@ -55,10 +77,9 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    fun addToLaundry(clothing: Clothing){
+    fun addToLaundry() {
         viewModelScope.launch {
-            val laundry = Laundry(clothingId = clothing.id, image = clothing.image)
-            laundryRepository.insertAll(listOf(laundry))
+            detailRepository.addLaundry(clothingId)
             Toast.makeText(application, "Added to laundry", Toast.LENGTH_SHORT).show()
         }
     }

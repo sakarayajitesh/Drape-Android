@@ -18,4 +18,7 @@ interface LaundryDao {
     @Insert
     suspend fun insertAll(vararg laundriesEntities: Laundry)
 
+    @Query("SELECT * FROM laundry where clothing_id=:clothingId")
+    fun getAllWhere(clothingId: Int): Flow<List<Laundry>>
+
 }

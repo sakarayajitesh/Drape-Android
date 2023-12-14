@@ -1,8 +1,7 @@
 package com.ajitesh.drape.ui.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -29,7 +28,7 @@ import com.ajitesh.drape.ui.outfit.OutfitScreen
 import com.ajitesh.drape.ui.outfit.OutfitViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,

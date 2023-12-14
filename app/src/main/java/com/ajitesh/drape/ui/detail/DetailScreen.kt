@@ -4,9 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
@@ -14,6 +18,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -22,12 +27,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ajitesh.drape.data.datasource.local.entity.Clothing
+import com.ajitesh.drape.getDateFromTimeStamp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
@@ -36,7 +46,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 fun DetailScreen(
     uiState: DetailUiState,
     addToOutfit: (clothing: Clothing) -> Unit,
-    addToLaundry: (clothing: Clothing) -> Unit,
+    addToLaundry: () -> Unit,
     popBackStack: () -> Unit
 ) {
     Scaffold(
@@ -64,7 +74,7 @@ fun DetailScreen(
                     }
                     IconButton(onClick = {
                         if (uiState is DetailUiState.OpenDetail)
-                            addToLaundry(uiState.clothing)
+                            addToLaundry()
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.ShoppingCart,
@@ -97,13 +107,62 @@ fun DetailScreen(
             if (uiState is DetailUiState.OpenDetail) {
                 val clothing = uiState.clothing
                 Column(modifier = Modifier.fillMaxSize()) {
-                    Row {
+                    Row(modifier = Modifier.aspectRatio(2f / 1.5f)) {
                         DetailScreenImage(modifier = Modifier.weight(1f), image = clothing.image)
-                        Box(modifier = Modifier.weight(1f)) {
-
+                        Box(modifier = Modifier.width(16.dp))
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxSize()
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = clothing.wearLimit.toString(),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                )
+                                Text(text = "Wear Limit", fontSize = 12.sp)
+                            }
                         }
                     }
 
+                    if (uiState.laundryCount != null && uiState.laundryCount > 0) {
+
+                        val lastLaundryDate =
+                            if (uiState.lastLaundryDate != null) getDateFromTimeStamp(uiState.lastLaundryDate) else ""
+
+                        Box(modifier = Modifier.height(16.dp))
+                        Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(4.dp)) {
+                            Row(modifier = Modifier.padding(16.dp)) {
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = uiState.laundryCount.toString(),
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp
+                                    )
+                                    Text(text = "Total Laundry", fontSize = 12.sp)
+                                }
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = lastLaundryDate,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp
+                                    )
+                                    Text(text = "Last Laundry", fontSize = 12.sp)
+                                }
+                            }
+                        }
+
+                    }
                 }
             } else {
                 Text(text = "Detail Error")
@@ -115,18 +174,17 @@ fun DetailScreen(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun DetailScreenImage(modifier: Modifier = Modifier, image: String) {
-    val imageSize = 300.dp
     if (image.isNotEmpty())
         GlideImage(
-            modifier = modifier.height(imageSize),
+            modifier = modifier.clip(shape = RoundedCornerShape(4.dp)),
             model = image,
-            contentScale = ContentScale.FillHeight,
+            contentScale = ContentScale.Crop,
             contentDescription = "Clothing Image"
         )
     else
         Box(
             modifier = modifier
-                .height(imageSize)
+                .clip(shape = RoundedCornerShape(4.dp))
                 .background(color = Color.Gray)
         )
 }

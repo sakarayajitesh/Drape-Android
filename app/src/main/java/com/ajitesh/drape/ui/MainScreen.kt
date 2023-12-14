@@ -34,6 +34,7 @@ fun MainScreen() {
         ) {
             val viewModel = hiltViewModel<DetailViewModel>()
             val uiState by viewModel.uiState.collectAsState()
+
             DetailScreen(
                 uiState,
                 viewModel::addToOutfit,

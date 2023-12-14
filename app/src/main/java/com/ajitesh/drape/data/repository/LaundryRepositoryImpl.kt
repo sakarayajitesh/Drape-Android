@@ -8,8 +8,6 @@ import javax.inject.Inject
 class LaundryRepositoryImpl @Inject constructor(private val laundryDao: LaundryDao) :
     LaundryRepository {
 
-    override fun getAll() = laundryDao.getAll()
-
     override suspend fun insertAll(laundryList: List<Laundry>) {
        laundryDao.insertAll(*laundryList.toTypedArray())
     }
