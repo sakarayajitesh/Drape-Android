@@ -61,41 +61,7 @@ fun DetailScreen(
             )
         },
         bottomBar = {
-            BottomAppBar(
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete")
-                    }
-                    IconButton(onClick = {
-                        if (uiState is DetailUiState.OpenDetail)
-                            addToOutfit(uiState.clothing)
-                    }) {
-                        Icon(imageVector = Icons.Outlined.Person, contentDescription = "Outfit")
-                    }
-                    IconButton(onClick = {
-                        if (uiState is DetailUiState.OpenDetail)
-                            addToLaundry()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.ShoppingCart,
-                            contentDescription = "Laundry"
-                        )
-                    }
-                },
-                floatingActionButton = {
-                    ExtendedFloatingActionButton(
-                        expanded = false,
-                        text = { Text(text = "Edit") },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Outlined.Edit,
-                                contentDescription = "Edit"
-                            )
-                        },
-                        onClick = {}
-                    )
-                }
-            )
+            DetailScreenBottomAppBar(uiState, addToOutfit, addToLaundry)
         }
     ) { innerPadding ->
         Box(
@@ -130,38 +96,11 @@ fun DetailScreen(
                     }
 
                     if (uiState.laundryCount != null && uiState.laundryCount > 0) {
-
-                        val lastLaundryDate =
-                            if (uiState.lastLaundryDate != null) getDateFromTimeStamp(uiState.lastLaundryDate) else ""
-
                         Box(modifier = Modifier.height(16.dp))
-                        Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(4.dp)) {
-                            Row(modifier = Modifier.padding(16.dp)) {
-                                Column(
-                                    modifier = Modifier.weight(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        text = uiState.laundryCount.toString(),
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp
-                                    )
-                                    Text(text = "Total Laundry", fontSize = 12.sp)
-                                }
-                                Column(
-                                    modifier = Modifier.weight(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        text = lastLaundryDate,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp
-                                    )
-                                    Text(text = "Last Laundry", fontSize = 12.sp)
-                                }
-                            }
-                        }
-
+                        DetailScreenLaundry(
+                            laundryCount = uiState.laundryCount,
+                            lastLaundryDate = uiState.lastLaundryDate
+                        )
                     }
                 }
             } else {
@@ -171,9 +110,52 @@ fun DetailScreen(
     }
 }
 
+@Composable
+fun DetailScreenBottomAppBar(
+    uiState: DetailUiState,
+    addToOutfit: (clothing: Clothing) -> Unit,
+    addToLaundry: () -> Unit
+) {
+    BottomAppBar(
+        actions = {
+            IconButton(onClick = {}) {
+                Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete")
+            }
+            IconButton(onClick = {
+                if (uiState is DetailUiState.OpenDetail)
+                    addToOutfit(uiState.clothing)
+            }) {
+                Icon(imageVector = Icons.Outlined.Person, contentDescription = "Outfit")
+            }
+            IconButton(onClick = {
+                if (uiState is DetailUiState.OpenDetail)
+                    addToLaundry()
+            }) {
+                Icon(
+                    imageVector = Icons.Outlined.ShoppingCart,
+                    contentDescription = "Laundry"
+                )
+            }
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                expanded = false,
+                text = { Text(text = "Edit") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "Edit"
+                    )
+                },
+                onClick = {}
+            )
+        }
+    )
+}
+
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun DetailScreenImage(modifier: Modifier = Modifier, image: String) {
+private fun DetailScreenImage(modifier: Modifier = Modifier, image: String) {
     if (image.isNotEmpty())
         GlideImage(
             modifier = modifier.clip(shape = RoundedCornerShape(4.dp)),
@@ -187,6 +169,38 @@ fun DetailScreenImage(modifier: Modifier = Modifier, image: String) {
                 .clip(shape = RoundedCornerShape(4.dp))
                 .background(color = Color.Gray)
         )
+}
+
+@Composable
+private fun DetailScreenLaundry(laundryCount: Int, lastLaundryDate: Long?) {
+    val mLastLaundryDate =
+        if (lastLaundryDate != null) getDateFromTimeStamp(lastLaundryDate) else ""
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(4.dp)) {
+        Row(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = laundryCount.toString(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+                Text(text = "Total Laundry", fontSize = 12.sp)
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = mLastLaundryDate,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+                Text(text = "Last Laundry", fontSize = 12.sp)
+            }
+        }
+    }
 }
 
 @Preview
