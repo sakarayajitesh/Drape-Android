@@ -98,6 +98,7 @@ fun DetailScreen(
                     if (uiState.laundryCount != null && uiState.laundryCount > 0) {
                         Box(modifier = Modifier.height(16.dp))
                         DetailScreenLaundry(
+                            modifier = Modifier.fillMaxWidth(),
                             laundryCount = uiState.laundryCount,
                             lastLaundryDate = uiState.lastLaundryDate
                         )
@@ -172,10 +173,10 @@ private fun DetailScreenImage(modifier: Modifier = Modifier, image: String) {
 }
 
 @Composable
-private fun DetailScreenLaundry(laundryCount: Int, lastLaundryDate: Long?) {
+private fun DetailScreenLaundry(modifier: Modifier, laundryCount: Int, lastLaundryDate: Long?) {
     val mLastLaundryDate =
         if (lastLaundryDate != null) getDateFromTimeStamp(lastLaundryDate) else ""
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(4.dp)) {
+    Card(modifier = modifier, shape = RoundedCornerShape(4.dp)) {
         Row(modifier = Modifier.padding(16.dp)) {
             Column(
                 modifier = Modifier.weight(1f),
