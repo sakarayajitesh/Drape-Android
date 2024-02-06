@@ -3,6 +3,7 @@ package com.ajitesh.drape.ui.manage
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -77,10 +78,11 @@ fun ManageScreen(
                         items(clothingList) { clothing ->
                             GlideImage(
                                 model = clothing.image,
-                                contentScale = ContentScale.Fit,
+                                contentScale = ContentScale.Crop,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .aspectRatio(1f / 1.5f)
                                     .clip(shape = RoundedCornerShape(4.dp))
                             ) { requestBuilder ->
                                 requestBuilder.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
