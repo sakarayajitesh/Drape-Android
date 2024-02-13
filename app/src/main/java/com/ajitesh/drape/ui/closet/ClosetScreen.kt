@@ -2,6 +2,7 @@ package com.ajitesh.drape.ui.closet
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -109,7 +110,14 @@ fun ClosetScreen(
                                         .aspectRatio(1f / 1.6f)
                                         .clip(shape = RoundedCornerShape(4.dp))
                                         .clickable {
-                                            navigate("detail/${photo.id}")
+//                                            navigate("detail/${photo.id}")
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    "This feature is coming soon",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
                                         }
                                 )
                             }
