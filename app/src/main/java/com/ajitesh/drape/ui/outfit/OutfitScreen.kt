@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,7 +60,16 @@ fun OutfitScreen(uiState: OutfitUiState) {
                         },
                     )
                 } else {
-                    Text(modifier = Modifier.align(Alignment.Center), text = "Empty List")
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(16.dp),
+                            text = "Add a clothing to the outfits to appear here.",
+                            textAlign = TextAlign.Center,
+                            fontSize = 14.sp
+                        )
+                    }
                 }
             } else {
                 Text(text = "Error", fontSize = 24.sp)
@@ -85,7 +96,7 @@ fun OutfitTile(entry: Map.Entry<String, List<Outfit>>) {
                     val imageModifier = Modifier
                         .height(120.dp)
                         .width(80.dp)
-                    if(index==0)
+                    if (index == 0)
                         Box(modifier = Modifier.size(16.dp))
                     else
                         Box(modifier = Modifier.size(4.dp))
@@ -98,7 +109,7 @@ fun OutfitTile(entry: Map.Entry<String, List<Outfit>>) {
                         )
                     else
                         Box(modifier = imageModifier.background(color = Color.Gray))
-                    if(index==entry.value.toList().size-1){
+                    if (index == entry.value.toList().size - 1) {
                         Box(modifier = Modifier.size(16.dp))
                     }
                 }

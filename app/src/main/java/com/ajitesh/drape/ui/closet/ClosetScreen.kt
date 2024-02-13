@@ -8,8 +8,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -31,6 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import timber.log.Timber
@@ -65,22 +68,23 @@ fun ClosetScreen(
             TopAppBar(title = { Text(text = "Closet") })
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = {
-                    launcher.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly
+            if (uiState is ClosetUiState.PhotoList && uiState.photos.isNotEmpty())
+                ExtendedFloatingActionButton(
+                    onClick = {
+                        launcher.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
                         )
-                    )
-                },
-                text = { Text("Clothes") },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Add"
-                    )
-                }
-            )
+                    },
+                    text = { Text("Clothes") },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Add"
+                        )
+                    }
+                )
         }
     ) {
         Box(
@@ -113,7 +117,29 @@ fun ClosetScreen(
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {
-                    Text(modifier = Modifier.align(Alignment.Center), text = "Empty List")
+                    Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "Your closet looks empty!", fontSize = 14.sp)
+                        Box(modifier = Modifier.height(16.dp))
+                        ExtendedFloatingActionButton(
+                            onClick = {
+                                launcher.launch(
+                                    PickVisualMediaRequest(
+                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                    )
+                                )
+                            },
+                            text = { Text("Clothes") },
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Filled.Add,
+                                    contentDescription = "Add"
+                                )
+                            }
+                        )
+                    }
                 }
             } else {
                 Text(modifier = Modifier.align(Alignment.Center), text = "Error State")

@@ -18,11 +18,14 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ajitesh.drape.data.datasource.local.entity.Clothing
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -41,6 +44,7 @@ fun ManageScreen(
         is TabUiState.Hanger -> 1
         is TabUiState.Basket -> 2
     }
+
 
     Scaffold(
         topBar = {
@@ -70,30 +74,47 @@ fun ManageScreen(
                 )
             }
             Box(modifier = Modifier.fillMaxSize()) {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(80.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    content = {
-                        items(clothingList) { clothing ->
-                            GlideImage(
-                                model = clothing.image,
-                                contentScale = ContentScale.Crop,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(1f / 1.5f)
-                                    .clip(shape = RoundedCornerShape(4.dp))
-                            ) { requestBuilder ->
-                                requestBuilder.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                                    .skipMemoryCache(true)
+                if (clothingList.isNotEmpty()) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(80.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        content = {
+                            items(clothingList) { clothing ->
+                                GlideImage(
+                                    model = clothing.image,
+                                    contentScale = ContentScale.Crop,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(1f / 1.5f)
+                                        .clip(shape = RoundedCornerShape(4.dp))
+                                ) { requestBuilder ->
+                                    requestBuilder.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                        .skipMemoryCache(true)
+                                }
                             }
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                } else {
+                    val emptyText = when (tabSelectedIndex) {
+                        0 -> "Seems like each piece of clothing has been worn multiple times."
+                        1 -> "It appears that no clothes have been worn only once"
+                        2 -> "There are no clothes that need to be laundered."
+                        else -> ""
+                    }
+                    Text(
+                        text = emptyText,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(36.dp),
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }
