@@ -3,6 +3,7 @@ package com.ajitesh.drape.data.repository
 import com.ajitesh.drape.data.datasource.local.dao.OutfitDao
 import com.ajitesh.drape.data.datasource.local.entity.Outfit
 import com.ajitesh.drape.domain.repository.OutfitRepository
+import com.ajitesh.drape.getFormattedDateFromLocalDate
 import com.ajitesh.drape.groupByTimestamp
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
@@ -15,13 +16,13 @@ class OutfitRepositoryImpl @Inject constructor(
     private val currentDate = LocalDate.now()
 
     override fun getAllAsMap() = outfitDao.getAll().map {
-        it.reversed().groupByTimestamp()
+        it.groupByTimestamp().toSortedMap()
     }.map {
         it.mapKeys { (localDate, _) ->
             when(localDate){
                 currentDate -> "Today"
                 currentDate.minusDays(1) -> "Yesterday"
-                else -> localDate.toString()
+                else -> getFormattedDateFromLocalDate(localDate)
             }
         }
     }

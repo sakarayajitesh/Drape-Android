@@ -51,7 +51,7 @@ fun OutfitScreen(uiState: OutfitUiState) {
                     val outfitsMap = uiState.outfits
                     LazyColumn(
                         content = {
-                            items(items = outfitsMap.entries.toList()) { entry ->
+                            items(items = outfitsMap.entries.toList().reversed()) { entry ->
                                 OutfitTile(entry)
                                 Box(modifier = Modifier.height(8.dp))
                             }
