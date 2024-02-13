@@ -8,8 +8,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -92,17 +92,17 @@ fun ClosetScreen(
             if (uiState is ClosetUiState.PhotoList) {
                 if (uiState.photos.isNotEmpty()) {
                     LazyVerticalGrid(
-                        columns = GridCells.Adaptive(80.dp),
+                        columns = GridCells.Adaptive(minSize = 80.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         content = {
                             items(uiState.photos) { photo ->
                                 GlideImage(
                                     model = photo.image,
-                                    contentScale = ContentScale.Fit,
+                                    contentScale = ContentScale.Crop,
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .fillMaxWidth()
+                                        .aspectRatio(1f / 1.5f)
                                         .clip(shape = RoundedCornerShape(4.dp))
                                         .clickable {
                                             navigate("detail/${photo.id}")

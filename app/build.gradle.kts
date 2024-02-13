@@ -24,12 +24,16 @@ android {
     }
 
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-DEBUG"
         }
     }
     compileOptions {
@@ -48,6 +52,17 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    flavorDimensions += "version"
+    productFlavors {
+        create("free") {
+            applicationId = "com.ajitesh.drape.free"
+            versionName = "1.0-free"
+        }
+        create("paid") {
+            applicationId = "com.ajitesh.drape.paid"
+            versionName = "1.0-paid"
         }
     }
 }
