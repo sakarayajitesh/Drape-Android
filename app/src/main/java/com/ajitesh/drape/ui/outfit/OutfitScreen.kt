@@ -44,7 +44,7 @@ fun OutfitScreen(uiState: OutfitUiState) {
         Box(
             modifier = Modifier
                 .padding(it)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
         ) {
             if (uiState is OutfitUiState.OutfitList) {
                 if (uiState.outfits.isNotEmpty()) {
@@ -53,7 +53,7 @@ fun OutfitScreen(uiState: OutfitUiState) {
                         content = {
                             items(items = outfitsMap.entries.toList()) { entry ->
                                 OutfitTile(entry)
-                                Box(modifier = Modifier.height(16.dp))
+                                Box(modifier = Modifier.height(8.dp))
                             }
                         },
                     )
@@ -88,7 +88,7 @@ fun OutfitTile(entry: Map.Entry<String, List<Outfit>>) {
                     if(index==0)
                         Box(modifier = Modifier.size(16.dp))
                     else
-                        Box(modifier = Modifier.size(8.dp))
+                        Box(modifier = Modifier.size(4.dp))
                     if (outfit.image.isNotEmpty())
                         GlideImage(
                             modifier = imageModifier.clip(shape = RoundedCornerShape(4.dp)),
