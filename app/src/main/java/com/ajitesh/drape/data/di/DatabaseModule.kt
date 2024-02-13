@@ -21,8 +21,8 @@ object DatabaseModule {
         Room.databaseBuilder(
             application.applicationContext,
             AppDatabase::class.java,
-            "drape-database"
-        )
+            "Drape"
+        ).createFromAsset("predrape.db")
             .build()
 
 
