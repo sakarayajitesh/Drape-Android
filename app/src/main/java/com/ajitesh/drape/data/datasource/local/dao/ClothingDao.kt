@@ -21,4 +21,7 @@ interface ClothingDao {
     @Insert
     suspend fun insertAll(vararg clothings: Clothing)
 
+    @Query("DELETE FROM clothing WHERE id=:id")
+    suspend fun delete(id: Int): Int
+
 }

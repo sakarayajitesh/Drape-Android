@@ -10,4 +10,5 @@ interface DetailRepository {
     fun getLaundry(clothingId: Int): Flow<List<Laundry>>
 
     suspend fun addLaundry(id: Int)
+    suspend fun deleteClothing(id: Int): Int
 }

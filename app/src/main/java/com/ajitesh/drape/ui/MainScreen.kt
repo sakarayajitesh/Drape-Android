@@ -39,6 +39,7 @@ fun MainScreen() {
                 uiState,
                 viewModel::addToOutfit,
                 viewModel::addToLaundry,
+                viewModel::deleteClothing,
                 navController::popBackStack
             )
         }

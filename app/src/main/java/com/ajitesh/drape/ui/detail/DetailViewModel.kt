@@ -1,9 +1,7 @@
 package com.ajitesh.drape.ui.detail
 
-import android.app.Application
-import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajitesh.drape.data.datasource.local.entity.Clothing
 import com.ajitesh.drape.data.datasource.local.entity.Outfit
@@ -28,10 +26,9 @@ sealed class DetailUiState {
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val application: Application,
     private val outfitRepository: OutfitRepository,
     private val detailRepository: DetailRepository
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<DetailUiState>(DetailUiState.Error)
     val uiState = _uiState.asStateFlow()
@@ -73,14 +70,19 @@ class DetailViewModel @Inject constructor(
         viewModelScope.launch {
             val outfit = Outfit(clothingId = clothing.id, image = clothing.image)
             outfitRepository.insertAll(listOf(outfit))
-            Toast.makeText(application, "Added to outfit", Toast.LENGTH_SHORT).show()
         }
     }
 
     fun addToLaundry() {
         viewModelScope.launch {
             detailRepository.addLaundry(clothingId)
-            Toast.makeText(application, "Added to laundry", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun deleteClothing(onDelete: () -> Unit) {
+        viewModelScope.launch {
+            detailRepository.deleteClothing(clothingId)
+            onDelete()
         }
     }
 
