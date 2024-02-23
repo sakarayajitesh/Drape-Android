@@ -18,32 +18,38 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
 
     @Provides
+    @Singleton
     fun provideClothingRepository(clothingDao: ClothingDao): ClosetRepository {
         return ClosetRepositoryImpl(clothingDao)
     }
 
     @Provides
+    @Singleton
     fun provideOutfitRepository(outfitDao: OutfitDao): OutfitRepository {
         return OutfitRepositoryImpl(outfitDao)
     }
 
     @Provides
+    @Singleton
     fun provideMasterRepository(masterDao: MasterDao, clothingDao: ClothingDao): MasterRepository {
         return MasterRepositoryImpl(masterDao, clothingDao)
     }
 
     @Provides
+    @Singleton
     fun provideLaundryRepository(laundryDao: LaundryDao): LaundryRepository {
         return LaundryRepositoryImpl(laundryDao)
     }
 
     @Provides
+    @Singleton
     fun provideDetailRepository(
         clothingDao: ClothingDao,
         laundryDao: LaundryDao

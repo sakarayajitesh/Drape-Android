@@ -1,5 +1,6 @@
 package com.ajitesh.drape.ui.detail
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,6 +52,7 @@ fun DetailScreen(
     delete: (() -> Unit) -> Unit,
     popBackStack: () -> Unit
 ) {
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -61,7 +64,11 @@ fun DetailScreen(
                 },
                 actions = {
                     FilledTonalIconButton(onClick = {
-                        delete(popBackStack)
+                        delete {
+                            popBackStack()
+                            Toast.makeText(context, "Clothing Deleted", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }) {
                         Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete")
                     }

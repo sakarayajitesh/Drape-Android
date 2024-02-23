@@ -11,12 +11,14 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
     @Provides
+    @Singleton
     fun provideDatabase(application: Application): AppDatabase =
         Room.databaseBuilder(
             application.applicationContext,
@@ -27,21 +29,25 @@ object DatabaseModule {
 
 
     @Provides
+    @Singleton
     fun provideClothingDao(appDatabase: AppDatabase): ClothingDao {
         return appDatabase.clothingDao()
     }
 
     @Provides
+    @Singleton
     fun provideOutfitDao(appDatabase: AppDatabase): OutfitDao {
         return appDatabase.outfitDao()
     }
 
     @Provides
+    @Singleton
     fun provideLaundryDao(appDatabase: AppDatabase): LaundryDao {
         return appDatabase.laundryDao()
     }
 
     @Provides
+    @Singleton
     fun provideMasterDao(appDatabase: AppDatabase): MasterDao {
         return appDatabase.masterDao()
     }

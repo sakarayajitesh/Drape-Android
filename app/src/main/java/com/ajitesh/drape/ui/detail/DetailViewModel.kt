@@ -79,7 +79,7 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    fun deleteClothing(onDelete: () -> Unit) {
+    fun delete(onDelete: () -> Unit) {
         viewModelScope.launch {
             detailRepository.deleteClothing(clothingId)
             onDelete()

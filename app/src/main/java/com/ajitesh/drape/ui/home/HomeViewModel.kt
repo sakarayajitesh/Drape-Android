@@ -2,8 +2,10 @@ package com.ajitesh.drape.ui.home
 
 import androidx.lifecycle.ViewModel
 import com.ajitesh.drape.R
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 sealed class HomeUiState(val title: String, val icon: Int, val position: Int){
     object Explore : HomeUiState("Explore", R.drawable.explore, 0)
@@ -19,13 +21,12 @@ val HomeUiStateList = listOf(
     HomeUiState.Manage,
 )
 
-class HomeViewModel: ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Closet)
     val uiState = _uiState.asStateFlow()
-
-    fun updateUiState(homeUiState: HomeUiState){
+    fun updateUiState(homeUiState: HomeUiState) {
         _uiState.value = homeUiState
     }
-
 }

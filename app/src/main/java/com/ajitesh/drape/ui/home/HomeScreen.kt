@@ -1,6 +1,5 @@
 package com.ajitesh.drape.ui.home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,7 +27,7 @@ import com.ajitesh.drape.ui.outfit.OutfitScreen
 import com.ajitesh.drape.ui.outfit.OutfitViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
@@ -41,7 +40,12 @@ fun HomeScreen(
             NavigationBar {
                 HomeUiStateList.forEachIndexed { _, item ->
                     NavigationBarItem(
-                        icon = { Icon(painter = painterResource(id = item.icon), contentDescription = item.title) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = item.icon),
+                                contentDescription = item.title
+                            )
+                        },
                         label = { Text(item.title) },
                         selected = HomeUiStateList[uiState.position].title == item.title,
                         onClick = {

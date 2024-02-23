@@ -7,4 +7,6 @@ interface ClosetRepository {
     fun getAll(): Flow<List<Clothing>>
     suspend fun insertAll(clothingList: List<Clothing>)
     suspend fun get(id: Int): Clothing
+
+    suspend fun deleteClothing(id: Int): Int
 }
