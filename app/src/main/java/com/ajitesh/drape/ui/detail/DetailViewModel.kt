@@ -66,16 +66,18 @@ class DetailViewModel @Inject constructor(
         _uiState.value = newState
     }
 
-    fun addToOutfit(clothing: Clothing) {
+    fun addToOutfit(clothing: Clothing, onComplete: () -> Unit) {
         viewModelScope.launch {
             val outfit = Outfit(clothingId = clothing.id, image = clothing.image)
             outfitRepository.insertAll(listOf(outfit))
+            onComplete()
         }
     }
 
-    fun addToLaundry() {
+    fun addToLaundry(onComplete: () -> Unit) {
         viewModelScope.launch {
             detailRepository.addLaundry(clothingId)
+            onComplete()
         }
     }
 

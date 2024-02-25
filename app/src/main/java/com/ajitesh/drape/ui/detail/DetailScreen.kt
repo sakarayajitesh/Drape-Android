@@ -1,5 +1,6 @@
 package com.ajitesh.drape.ui.detail
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -43,7 +44,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ajitesh.drape.R
@@ -57,8 +57,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun DetailScreen(
     uiState: DetailUiState,
-    addToOutfit: (clothing: Clothing) -> Unit,
-    addToLaundry: () -> Unit,
+    addToOutfit: (clothing: Clothing, () -> Unit) -> Unit,
+    addToLaundry: (() -> Unit) -> Unit,
     delete: (() -> Unit) -> Unit,
     popBackStack: () -> Unit
 ) {
@@ -81,11 +81,6 @@ fun DetailScreen(
                 actions = {
                     FilledTonalIconButton(onClick = {
                         showBottomSheet = true
-//                        delete {
-//                            popBackStack()
-//                            Toast.makeText(context, "Clothing Deleted", Toast.LENGTH_SHORT)
-//                                .show()
-//                        }
                     }) {
                         Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete")
                     }
@@ -94,7 +89,7 @@ fun DetailScreen(
         },
         bottomBar = {
             if (uiState is DetailUiState.OpenDetail)
-                DetailScreenBottomAppBar(uiState.clothing, addToOutfit, addToLaundry)
+                DetailScreenBottomAppBar(context, uiState.clothing, addToOutfit, addToLaundry)
         }
     ) { innerPadding ->
         Box(
@@ -182,14 +177,18 @@ fun DetailScreen(
 
 @Composable
 fun DetailScreenBottomAppBar(
+    context: Context,
     clothing: Clothing,
-    addToOutfit: (clothing: Clothing) -> Unit,
-    addToLaundry: () -> Unit
+    addToOutfit: (clothing: Clothing, () -> Unit) -> Unit,
+    addToLaundry: (() -> Unit) -> Unit
 ) {
     BottomAppBar(
         actions = {
             FilledTonalButton(onClick = {
-                addToOutfit(clothing)
+                addToOutfit(clothing) {
+                    Toast.makeText(context, "Added to outfit", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.outfit),
@@ -200,7 +199,10 @@ fun DetailScreenBottomAppBar(
             }
             Box(modifier = Modifier.width(16.dp))
             FilledTonalButton(onClick = {
-                addToLaundry()
+                addToLaundry() {
+                    Toast.makeText(context, "Added to laundry", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.laundry),
@@ -274,17 +276,4 @@ private fun DetailScreenLaundry(modifier: Modifier, laundryCount: Int, lastLaund
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewDetailScreen() {
-    val clothing = Clothing(id = -1, image = "")
-    DetailScreen(
-        uiState = DetailUiState.OpenDetail(clothing),
-        addToOutfit = {},
-        addToLaundry = {},
-        delete = {},
-        popBackStack = {}
-    )
 }
