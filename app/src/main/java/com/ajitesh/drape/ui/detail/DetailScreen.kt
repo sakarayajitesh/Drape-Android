@@ -1,9 +1,11 @@
 package com.ajitesh.drape.ui.detail
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
@@ -22,10 +24,18 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,7 +44,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ajitesh.drape.R
@@ -42,33 +51,36 @@ import com.ajitesh.drape.data.datasource.local.entity.Clothing
 import com.ajitesh.drape.getDateFromTimeStamp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
     uiState: DetailUiState,
-    addToOutfit: (clothing: Clothing) -> Unit,
-    addToLaundry: () -> Unit,
+    addToOutfit: (clothing: Clothing, () -> Unit) -> Unit,
+    addToLaundry: (() -> Unit) -> Unit,
     delete: (() -> Unit) -> Unit,
     popBackStack: () -> Unit
 ) {
     val context = LocalContext.current
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showBottomSheet by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = "Detail") },
                 navigationIcon = {
                     IconButton(onClick = { popBackStack() }) {
-                        Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
                 },
                 actions = {
                     FilledTonalIconButton(onClick = {
-                        delete {
-                            popBackStack()
-                            Toast.makeText(context, "Clothing Deleted", Toast.LENGTH_SHORT)
-                                .show()
-                        }
+                        showBottomSheet = true
                     }) {
                         Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete")
                     }
@@ -77,7 +89,7 @@ fun DetailScreen(
         },
         bottomBar = {
             if (uiState is DetailUiState.OpenDetail)
-                DetailScreenBottomAppBar(uiState.clothing, addToOutfit, addToLaundry)
+                DetailScreenBottomAppBar(context, uiState.clothing, addToOutfit, addToLaundry)
         }
     ) { innerPadding ->
         Box(
@@ -126,19 +138,57 @@ fun DetailScreen(
                 Text(text = "Detail Error")
             }
         }
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState,
+                dragHandle = {}
+            ) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(text = "Delete? It will be removed from outfits too.")
+                    Box(modifier = Modifier.height(16.dp))
+                    TextButton(
+                        onClick = {
+                            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showBottomSheet = false
+                                }
+                            }
+                            delete {
+                                popBackStack()
+                                Toast.makeText(context, "Clothing Deleted", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        },
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
+                        Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete")
+                        Box(modifier = Modifier.width(16.dp))
+                        Text(text = "Delete", fontSize = 16.sp)
+                    }
+                }
+            }
+        }
     }
 }
 
 @Composable
 fun DetailScreenBottomAppBar(
+    context: Context,
     clothing: Clothing,
-    addToOutfit: (clothing: Clothing) -> Unit,
-    addToLaundry: () -> Unit
+    addToOutfit: (clothing: Clothing, () -> Unit) -> Unit,
+    addToLaundry: (() -> Unit) -> Unit
 ) {
     BottomAppBar(
         actions = {
             FilledTonalButton(onClick = {
-                addToOutfit(clothing)
+                addToOutfit(clothing) {
+                    Toast.makeText(context, "Added to outfit", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.outfit),
@@ -149,7 +199,10 @@ fun DetailScreenBottomAppBar(
             }
             Box(modifier = Modifier.width(16.dp))
             FilledTonalButton(onClick = {
-                addToLaundry()
+                addToLaundry() {
+                    Toast.makeText(context, "Added to laundry", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.laundry),
@@ -223,17 +276,4 @@ private fun DetailScreenLaundry(modifier: Modifier, laundryCount: Int, lastLaund
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewDetailScreen() {
-    val clothing = Clothing(id = -1, image = "")
-    DetailScreen(
-        uiState = DetailUiState.OpenDetail(clothing),
-        addToOutfit = {},
-        addToLaundry = {},
-        delete = {},
-        popBackStack = {}
-    )
 }

@@ -2,9 +2,17 @@ package com.ajitesh.drape.data.datasource.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = Clothing::class,
+        childColumns = ["clothing_id"],
+        parentColumns = ["id"],
+        onDelete = ForeignKey.CASCADE
+    )]
+)
 data class Outfit(
     @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "clothing_id") val clothingId: Int,

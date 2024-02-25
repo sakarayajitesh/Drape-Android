@@ -5,7 +5,6 @@ import com.ajitesh.drape.data.datasource.local.entity.Clothing
 import com.ajitesh.drape.domain.repository.ClosetRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -14,15 +13,8 @@ class ClosetRepositoryImpl @Inject constructor(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ClosetRepository {
 
-    init {
-        println("ClosetRepositoryImpl - init")
-    }
 
-    override fun getAll(): Flow<List<Clothing>> {
-        val result = dao.getAll()
-        println("ClosetRepositoryImpl - Got data")
-        return result
-    }
+    override fun getAll() = dao.getAll()
 
     override suspend fun insertAll(clothingList: List<Clothing>) {
         withContext(dispatcher) {
