@@ -14,7 +14,7 @@ import com.ajitesh.drape.data.datasource.local.entity.Outfit
 
 @Database(
     entities = [Clothing::class, Outfit::class, Laundry::class, ClothingType::class],
-    version = 1
+    version = 2
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun clothingDao(): ClothingDao

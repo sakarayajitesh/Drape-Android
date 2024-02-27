@@ -34,6 +34,7 @@ android {
         getByName("debug") {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-DEBUG"
+            resValue("string", "app_name", "Drape-Debug")
         }
     }
     compileOptions {

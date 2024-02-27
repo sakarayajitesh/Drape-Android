@@ -109,21 +109,6 @@ fun DetailScreen(
                         image = clothing.image
                     )
                     Box(modifier = Modifier.height(16.dp))
-//                    Card {
-//                        Column(
-//                            modifier = Modifier
-//                                .padding(vertical = 8.dp, horizontal = 16.dp),
-//                            horizontalAlignment = Alignment.CenterHorizontally
-//                        ) {
-//                            Text(
-//                                text = clothing.wearLimit.toString(),
-//                                fontWeight = FontWeight.Bold,
-//                                fontSize = 24.sp
-//                            )
-//                            Text(text = "Wear Limit", fontSize = 12.sp)
-//                        }
-//
-//                    }
 
                     if (uiState.laundryCount != null && uiState.laundryCount > 0) {
                         Box(modifier = Modifier.height(16.dp))
