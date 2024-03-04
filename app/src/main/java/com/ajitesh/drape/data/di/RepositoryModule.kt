@@ -38,8 +38,12 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideMasterRepository(masterDao: MasterDao, clothingDao: ClothingDao): MasterRepository {
-        return MasterRepositoryImpl(masterDao, clothingDao)
+    fun provideMasterRepository(
+        masterDao: MasterDao,
+        clothingDao: ClothingDao,
+        laundryDao: LaundryDao
+    ): MasterRepository {
+        return MasterRepositoryImpl(masterDao, clothingDao, laundryDao)
     }
 
     @Provides

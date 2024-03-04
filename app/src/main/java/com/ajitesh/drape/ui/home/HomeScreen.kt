@@ -1,5 +1,9 @@
 package com.ajitesh.drape.ui.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -9,6 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,30 +40,41 @@ fun HomeScreen(
     navigate: (String) -> Unit
 ) {
     val navController: NavHostController = rememberNavController()
+    var navBarVisible by remember { mutableStateOf(true) }
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                HomeUiStateList.forEachIndexed { _, item ->
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = item.icon),
-                                contentDescription = item.title
-                            )
-                        },
-                        label = { Text(item.title) },
-                        selected = HomeUiStateList[uiState.position].title == item.title,
-                        onClick = {
-                            updateUiState(item)
-                            navController.navigate(item.title) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
+            AnimatedVisibility(
+                visible = navBarVisible,
+                enter = slideInVertically(
+                    animationSpec = tween(
+                        durationMillis = 200
                     )
+                ) { it },
+                exit = fadeOut()
+            ) {
+                NavigationBar {
+                    HomeUiStateList.forEachIndexed { _, item ->
+                        NavigationBarItem(
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = item.icon),
+                                    contentDescription = item.title
+                                )
+                            },
+                            label = { Text(item.title) },
+                            selected = HomeUiStateList[uiState.position].title == item.title,
+                            onClick = {
+                                updateUiState(item)
+                                navController.navigate(item.title) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -87,10 +105,15 @@ fun HomeScreen(
                 val viewModel = hiltViewModel<ManageViewModel>()
                 val tabUiState by viewModel.tabUiState.collectAsState()
                 val clothingList by viewModel.clothingList.collectAsState(initial = emptyList())
+                val selectedClothing by viewModel.selectedClothing.collectAsState()
+                navBarVisible = selectedClothing.isEmpty()
                 ManageScreen(
                     tabUiState = tabUiState,
                     clothingList = clothingList,
-                    updateTabUiState = viewModel::updateTabUiState
+                    selectedClothingList = selectedClothing,
+                    updateTabUiState = viewModel::updateTabUiState,
+                    selectClothing = viewModel::selectClothing,
+                    addToLaundry = viewModel::addToLaundry
                 )
             }
         }

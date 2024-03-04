@@ -2,20 +2,24 @@ package com.ajitesh.drape.data.repository
 
 import com.ajitesh.drape.data.datasource.local.WornCount
 import com.ajitesh.drape.data.datasource.local.dao.ClothingDao
+import com.ajitesh.drape.data.datasource.local.dao.LaundryDao
 import com.ajitesh.drape.data.datasource.local.dao.MasterDao
 import com.ajitesh.drape.data.datasource.local.entity.Clothing
+import com.ajitesh.drape.data.datasource.local.entity.Laundry
 import com.ajitesh.drape.domain.repository.MasterRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.withContext
 
 class MasterRepositoryImpl(
     private val masterDao: MasterDao,
-    private val clothingDao: ClothingDao
+    private val clothingDao: ClothingDao,
+    private val laundryDao: LaundryDao,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : MasterRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -45,6 +49,14 @@ class MasterRepositoryImpl(
     override fun getBasketClothingList(): Flow<List<Clothing>> {
         return getClothingList {
             it.wornCount >= it.wearLimit
+        }
+    }
+
+    override suspend fun addAllToLaundry(ids: List<Int>, onComplete: () -> Unit) {
+        withContext(dispatcher) {
+            val laundryList = ids.map { Laundry(clothingId = it, image = "") }
+            laundryDao.insertAll(*laundryList.toTypedArray())
+            onComplete()
         }
     }
 }
