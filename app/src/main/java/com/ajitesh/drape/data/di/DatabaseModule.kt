@@ -25,6 +25,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "Drape"
         ).createFromAsset("predrape.db")
+            .fallbackToDestructiveMigration()
             .build()
 
 
