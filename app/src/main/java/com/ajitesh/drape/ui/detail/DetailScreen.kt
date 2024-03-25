@@ -176,7 +176,7 @@ fun DetailScreenBottomAppBar(
                 }
             }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.outfit),
+                    painter = painterResource(id = R.drawable.closet),
                     contentDescription = "Add to outfit"
                 )
                 Box(modifier = Modifier.width(4.dp))
