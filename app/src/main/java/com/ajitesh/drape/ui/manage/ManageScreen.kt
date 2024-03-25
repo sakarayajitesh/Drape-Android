@@ -12,8 +12,12 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,7 +59,10 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 fun ManageScreen(
     tabUiState: TabUiState,
@@ -125,6 +132,11 @@ fun ManageScreen(
             }
         }
     ) {
+        var isSwipeToLeft = false
+        val draggableState = rememberDraggableState {
+            isSwipeToLeft = it > 0
+        }
+
         Column(
             modifier = Modifier
                 .padding(it)
@@ -147,7 +159,28 @@ fun ManageScreen(
                     text = { Text(text = "Basket") }
                 )
             }
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .draggable(
+                        orientation = Orientation.Horizontal,
+                        onDragStopped = {
+                            val newTabIndex = if (isSwipeToLeft) {
+                                if (tabSelectedIndex > 0) tabSelectedIndex - 1 else tabSelectedIndex
+                            } else {
+                                if (tabSelectedIndex < 2) tabSelectedIndex + 1 else tabSelectedIndex
+                            }
+                            val newUiState = when (newTabIndex) {
+                                0 -> TabUiState.Fresh
+                                1 -> TabUiState.Hanger
+                                2 -> TabUiState.Basket
+                                else -> TabUiState.Fresh
+                            }
+                            updateTabUiState(newUiState)
+                        },
+                        state = draggableState
+                    )
+            ) {
                 if (clothingList.isNotEmpty()) {
                     Column {
                         LazyVerticalGrid(
